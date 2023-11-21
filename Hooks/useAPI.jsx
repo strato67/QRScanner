@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {API_SERVER} from '@env'
 
 const useAPI = () => {
     const [data, setData] = useState(null);
@@ -9,14 +10,15 @@ const useAPI = () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch('http://192.168.2.167:3000/api/studentScan/', {
+        console.log(` seat number: ${seatNumber}`)
+        const response = await fetch(`${API_SERVER}/api/studentScan/`, {
             method:'POST',
             headers:{
                 "Content-Type": "application/json"
             },
             body:JSON.stringify({
                 "studentID":100701820,
-                "seatNumber": 1,
+                "seatNumber": seatNumber,
                 "roomNumber": "UA1350"
             })
         })

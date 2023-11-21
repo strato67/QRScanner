@@ -18,6 +18,16 @@ export default function App() {
     })();
   }, []);
 
+  useEffect(()=>{
+    (async()=>{
+      if(scanData){
+        await scanStudent(parseInt(scanData))
+      }
+      
+    })()
+
+  },[scanData])
+
   if (!hasPermission) {
     return (
       <View style={styles.container}>
@@ -29,9 +39,9 @@ export default function App() {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanData(data);
     setShowRescan(true);
-    console.log(`Data: ${data}`);
-    scanStudent(parseInt(scanData))
-    console.log(`Type: ${type}`);
+    //console.log(`Data: ${data}`);
+    
+    //console.log(`Type: ${type}`);
   };
 
   return (
@@ -46,7 +56,7 @@ export default function App() {
         <Button
           title="Scan Again?"
           onPress={() => {
-            setScanData(false);
+            setScanData();
             setShowRescan(false);
           }}
         />
