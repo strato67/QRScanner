@@ -9,7 +9,7 @@ export default function App() {
   const [scanData, setScanData] = useState();
   const [showRescan, setShowRescan] = useState(false);
 
-  const {scanStudent, loading, error} = useAPI();
+  const { scanStudent, leaveSeat, loading, error } = useAPI();
 
   useEffect(() => {
     (async () => {
@@ -18,15 +18,13 @@ export default function App() {
     })();
   }, []);
 
-  useEffect(()=>{
-    (async()=>{
-      if(scanData){
-        await scanStudent(parseInt(scanData))
+  useEffect(() => {
+    (async () => {
+      if (scanData) {
+        await scanStudent(parseInt(scanData));
       }
-      
-    })()
-
-  },[scanData])
+    })();
+  }, [scanData]);
 
   if (!hasPermission) {
     return (
@@ -39,10 +37,17 @@ export default function App() {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanData(data);
     setShowRescan(true);
-    //console.log(`Data: ${data}`);
-    
-    //console.log(`Type: ${type}`);
+
   };
+
+  const handleLeaveSeat = async () =>{
+    if(scanData){
+      await leaveSeat(scanData)
+      setScanData();
+      setShowRescan(false);
+    }
+
+  }
 
   return (
     <View style={styles.container}>
@@ -53,13 +58,27 @@ export default function App() {
         barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
       />
       {scanData && showRescan && (
-        <Button
-          title="Scan Again?"
-          onPress={() => {
-            setScanData();
-            setShowRescan(false);
-          }}
-        />
+        <View style={styles.row}>
+          <Button
+            title="Scan Again?"
+            containerStyle={{ marginRight: 20 }}
+            style={styles.button}
+            onPress={() => {
+              setScanData();
+              handleLeaveSeat();
+              setShowRescan(false);
+            }}
+          />
+          <View style={styles.space} />
+          <Button
+            title="Leave Seat"
+            containerStyle={{ marginLeft: 20 }}
+            style={styles.button}
+            onPress={()=>{
+              handleLeaveSeat()
+            }}
+          />
+        </View>
       )}
       <StatusBar style="auto" />
     </View>
@@ -72,5 +91,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  row: {
+    flexDirection: "row",
+    padding: 10,
+  },
+  space: {
+    width: 20,
+    height: 20,
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "black",
   },
 });
